@@ -109,26 +109,15 @@ class _MyFeedPageState extends State<MyFeedPage> {
       child: Column(
         children: [
           Divider(),
-          // GestureDetector(
-          // onTap: () {
-          //   if (post.mine == false)
-          //     Navigator.push(
-          //       context,
-          //       MaterialPageRoute(
-          //         builder: (context) => OtherPage(uid: post.uid,),
-          //       ),
-          //     );
-          // }
+
 
 
           //#user info
           GestureDetector(
             onTap: (){
-              if (post.mine == false){
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => OtherProfilePage(uid:post.uid ,)));
+              if (post.mine != true){
+                Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => OtherProfilePage(uid: post.id)));
+
               }
               else return;
 

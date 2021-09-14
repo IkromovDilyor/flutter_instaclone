@@ -71,7 +71,7 @@ class _SignInPageState extends State<SignInPage> {
       Utils.fireToast("Check your email or password");
     } else {
       await Prefs.saveUserId(firebaseUser.uid);
-      Navigator.pushReplacementNamed(context, HomePage.id);
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => HomePage()));
     }
   }
 
