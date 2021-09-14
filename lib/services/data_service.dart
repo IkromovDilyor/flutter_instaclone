@@ -27,7 +27,7 @@ class DataService {
     return _firestore.collection(folder_users).doc(user.uid).set(user.toJson());
   }
 
-  static Future<USer> loadUser() async {
+  static Future<USer> loadUser({required String id}) async {
     String? uid = await Prefs.loadUserId();
     var  value = await _firestore.collection("users").doc(uid).get();
     USer user = USer.fromJson(value.data()!);
@@ -83,7 +83,7 @@ class DataService {
 
   // Post Related
   static Future<Post> storePost(Post post) async {
-    USer me = await loadUser();
+    USer me = await loadUser(id: '');
     post.uid = me.uid;
     post.fullname = me.fullname;
     post.img_user = me.img_url;
@@ -125,7 +125,7 @@ class DataService {
     return posts;
   }
 
-  static Future<List<Post>> loadPosts() async {
+  static Future<List<Post>> loadPosts({required String id}) async {
     List<Post> posts = [];
     String? uid = await Prefs.loadUserId();
 
@@ -167,7 +167,7 @@ class DataService {
    // Follower and Following Related
 
 static Future<USer> followUser(USer someone) async {
-    USer me = await loadUser();
+    USer me = await loadUser(id: '');
 
     // I followed to someone
   await _firestore.collection(folder_users).doc(me.uid).collection(folder_following).doc(someone.uid).set(someone.toJson());
@@ -180,7 +180,7 @@ static Future<USer> followUser(USer someone) async {
 
 
   static Future<USer> unfollowUser(USer someone) async {
-    USer me = await loadUser();
+    USer me = await loadUser(id: '');
 
     // I un followed to someone
     await _firestore.collection(folder_users).doc(me.uid).collection(folder_following).doc(someone.uid).delete();

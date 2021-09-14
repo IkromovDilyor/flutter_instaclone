@@ -57,7 +57,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
   }
 
   void _apiUpdateUser(String downloadUrl) async {
-    USer user = await DataService.loadUser();
+    USer user = await DataService.loadUser(id: '');
     user.img_url = downloadUrl;
     await DataService.updateUser(user);
     _apiLoadUser();
@@ -98,7 +98,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
     setState(() {
       isLoading = true;
     });
-    DataService.loadUser().then((value) => {
+    DataService.loadUser(id: '').then((value) => {
           _showUserInfo(value),
         });
   }
@@ -115,7 +115,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
   }
 
   void _apiLoadPosts() {
-    DataService.loadPosts().then((value) => {
+    DataService.loadPosts(id: '').then((value) => {
       _resLoadPosts(value),
     });
   }

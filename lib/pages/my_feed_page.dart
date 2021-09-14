@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_instaclone/model/post_model.dart';
+import 'package:flutter_instaclone/pages/other_profile_page.dart';
 import 'package:flutter_instaclone/services/data_service.dart';
 import 'package:flutter_instaclone/services/utils_service.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -20,44 +21,44 @@ class _MyFeedPageState extends State<MyFeedPage> {
   bool isLoading = false;
   List<Post> items = [];
 
-void _apiLoadFeeds() {
-  setState(() {
-    isLoading = true;
-  });
-  DataService.loadFeeds().then((value) => {
-    _resLoadFeeds(value),
-  });
-}
+  void _apiLoadFeeds() {
+    setState(() {
+      isLoading = true;
+    });
+    DataService.loadFeeds().then((value) => {
+      _resLoadFeeds(value),
+    });
+  }
 
-void _resLoadFeeds(List<Post> posts) {
-  setState(() {
-    items = posts;
-    isLoading = false;
-  });
-}
+  void _resLoadFeeds(List<Post> posts) {
+    setState(() {
+      items = posts;
+      isLoading = false;
+    });
+  }
 
- void _apiPostLike(Post post) async {
-  setState(() {
-    isLoading = true;
+  void _apiPostLike(Post post) async {
+    setState(() {
+      isLoading = true;
 
-  });
-  await DataService.likePost(post, true);
-  setState(() {
-    isLoading = false;
-    post.liked = true;
-  });
- }
+    });
+    await DataService.likePost(post, true);
+    setState(() {
+      isLoading = false;
+      post.liked = true;
+    });
+  }
 
- void _apiPostUnlike(Post post) async {
-  setState(() {
-    isLoading = true;
-  });
-  await DataService.likePost(post, false);
-  setState(() {
-    isLoading = false;
-    post.liked = false;
-  });
- }
+  void _apiPostUnlike(Post post) async {
+    setState(() {
+      isLoading = true;
+    });
+    await DataService.likePost(post, false);
+    setState(() {
+      isLoading = false;
+      post.liked = false;
+    });
+  }
 
   _actionRemovePost(Post post) async {
     var result = await Utils.dialogCommmon(
@@ -108,54 +109,77 @@ void _resLoadFeeds(List<Post> posts) {
       child: Column(
         children: [
           Divider(),
+          // GestureDetector(
+          // onTap: () {
+          //   if (post.mine == false)
+          //     Navigator.push(
+          //       context,
+          //       MaterialPageRoute(
+          //         builder: (context) => OtherPage(uid: post.uid,),
+          //       ),
+          //     );
+          // }
+
 
           //#user info
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(40),
-                      child: (post.img_user == null || post.img_user.isEmpty)? Image(
-                        image: AssetImage("assets/images/insta_icon.png"),
-                        width: 40,
-                        height: 40,
-                        fit: BoxFit.cover,
-                      ):Image.network(
-                        post.img_user,
-                        width: 40,
-                        height: 40,
-                        fit: BoxFit.cover,
+          GestureDetector(
+            onTap: (){
+              if (post.mine == false){
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => OtherProfilePage(uid:post.uid ,)));
+              }
+              else return;
+
+            },
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(40),
+                        child: (post.img_user == null || post.img_user.isEmpty)? Image(
+                          image: AssetImage("assets/images/insta_icon.png"),
+                          width: 40,
+                          height: 40,
+                          fit: BoxFit.cover,
+                        ):Image.network(
+                          post.img_user,
+                          width: 40,
+                          height: 40,
+                          fit: BoxFit.cover,
+                        ),
                       ),
-                    ),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(post.fullname, style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),),
-                        Text(post.date, style: TextStyle(fontWeight: FontWeight.normal),),
-                      ],
-                    ),
-                  ],
-                ),
-                post.mine ?
-                IconButton(
-                  icon: Icon(Icons.more_horiz),
-                  onPressed: (){
-                    _actionRemovePost(post);
-                  },
-                ) : SizedBox.shrink(),
-              ],
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(post.fullname, style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),),
+                          Text(post.date, style: TextStyle(fontWeight: FontWeight.normal),),
+                        ],
+                      ),
+                    ],
+                  ),
+                  post.mine ?
+                  IconButton(
+                    icon: Icon(Icons.more_horiz),
+                    onPressed: (){
+                      _actionRemovePost(post);
+                    },
+                  ) : SizedBox.shrink(),
+                ],
+              ),
             ),
           ),
 
           //#image
-        //  Image.network(post.postImage),
+          //  Image.network(post.postImage),
 
           CachedNetworkImage(
             width: MediaQuery.of(context).size.width,
@@ -173,18 +197,18 @@ void _resLoadFeeds(List<Post> posts) {
               Row(
                 children: [
                   IconButton(
-                    onPressed: (){
-                      if(!post.liked) {
-                        _apiPostLike(post);
-                      } else {
-                        _apiPostUnlike(post);
-                      }
-                    },
-                    icon: post.liked ?  Icon(FontAwesomeIcons.solidHeart, color: Colors.red) : Icon(FontAwesomeIcons.heart)
+                      onPressed: (){
+                        if(!post.liked) {
+                          _apiPostLike(post);
+                        } else {
+                          _apiPostUnlike(post);
+                        }
+                      },
+                      icon: post.liked ?  Icon(FontAwesomeIcons.solidHeart, color: Colors.red) : Icon(FontAwesomeIcons.heart)
                   ),
                   IconButton(onPressed: (){
-                    Share.share("Image:${post.img_post} \n Caption${post.caption}");
-                    }, icon: Icon(FontAwesomeIcons.solidPaperPlane))
+                    Share.share("Image: ${post.img_post} \n Caption: ${post.caption}");
+                  }, icon: Icon(FontAwesomeIcons.solidPaperPlane))
                 ],
               ),
             ],
@@ -198,11 +222,11 @@ void _resLoadFeeds(List<Post> posts) {
               softWrap: true,
               overflow: TextOverflow.visible,
               text: TextSpan(
-                children: [ TextSpan(
-                  text: "${post.caption}",
-                  style: TextStyle(color: Colors.black)
-                )
-                ]
+                  children: [ TextSpan(
+                      text: "${post.caption}",
+                      style: TextStyle(color: Colors.black)
+                  )
+                  ]
               ),
             ),
           ),
